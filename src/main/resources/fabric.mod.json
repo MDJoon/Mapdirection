@@ -1,0 +1,25 @@
+{
+	"schemaVersion": 1,
+	"id": "mapdirection",
+	"version": "${version}",
+	"name": "Mapdirection",
+	"description": "Shows off-map players on maps as directional icons instead of white dots.",
+	"authors": [
+		"MDJoon"
+	],
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"com.mdjoon.mapdirection.Mapdirection"
+		]
+	},
+	"mixins": [
+		"mapdirection.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
