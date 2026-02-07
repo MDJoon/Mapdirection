@@ -33,7 +33,7 @@ public abstract class MapStateMixin {
         if (player == null) return;
 
         String key = player.getName().getString();
-        MapDecoration decoration = decorations.get(key);
+        MapDecoration decoration = decorations.get(key);if(decoration == null) return;
         RegistryEntry<MapDecorationType> decoType = decoration.type();
 
         if(decoType == MapDecorationTypes.PLAYER_OFF_MAP || decoType == MapDecorationTypes.PLAYER_OFF_LIMITS) {
