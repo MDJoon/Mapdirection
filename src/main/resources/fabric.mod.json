@@ -7,6 +7,7 @@
 	"authors": [
 		"MDJoon"
 	],
+	"icon": "assets/mapdirection/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"client": [
