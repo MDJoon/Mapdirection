@@ -1,13 +1,14 @@
 package com.mdjoon.mapdirection.mixin;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.map.MapDecoration;
-import net.minecraft.item.map.MapDecorationType;
-import net.minecraft.item.map.MapDecorationTypes;
-import net.minecraft.item.map.MapState;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.minecraft.world.level.saveddata.maps.MapDecorationType;
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,28 +19,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 import java.util.Optional;
 
-@Mixin(MapState.class)
+@Mixin(MapItemSavedData.class)
 public abstract class MapStateMixin {
     @Final
     @Shadow
-    Map<String, MapDecoration> decorations;
+    private Map<String, net.minecraft.world.level.saveddata.maps.MapDecoration> decorations;
 
-    @Inject(method = "update", at = @At("TAIL"))
+    @Inject(method = "tickCarriedBy", at = @At("TAIL"))
     private void showDirectionOutsideMap(
-            PlayerEntity player,
-            ItemStack map,
-            CallbackInfo ci
+            Player player, ItemStack itemStack, ItemFrame placedInFrame, CallbackInfo ci
     ) {
         if (player == null) return;
 
         String key = player.getName().getString();
         MapDecoration decoration = decorations.get(key);if(decoration == null) return;
-        RegistryEntry<MapDecorationType> decoType = decoration.type();
+        Holder<MapDecorationType> decoType = decoration.type();
 
         if(decoType == MapDecorationTypes.PLAYER_OFF_MAP || decoType == MapDecorationTypes.PLAYER_OFF_LIMITS) {
             byte x = decoration.x();
-            byte z = decoration.z();
-            byte rotation = (byte) ((player.getYaw() % 360 + 360) % 360 / 22.5);
+            byte z = decoration.y();
+            byte rotation = (byte) ((player.getYRot() % 360 + 360) % 360 / 22.5);
             decorations.remove(key);
 
             decorations.put(
@@ -49,7 +48,7 @@ public abstract class MapStateMixin {
                             x,
                             z,
                             rotation,
-                            Optional.of(Text.of("Out of Map!"))
+                            Optional.of(Component.literal("Out of Map!"))
                     )
             );
         }
